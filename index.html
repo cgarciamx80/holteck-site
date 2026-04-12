@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Holteck is an AI-powered QA consulting agency. Traditional testing, AI-driven QA pipelines, and behavioral evaluation of AI systems." />
+  <title>Holteck — AI-Powered Quality. Perfected by People.</title>
+
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand:      '#ff7600',
+            brandhover: '#e56a00',
+            dark:       '#111111',
+            mid:        '#1a1a1a',
+            card:       '#1f1f1f',
+            border:     '#2a2a2a',
+            muted:      '#888888',
+            light:      '#f5f5f7',
+          },
+          fontFamily: {
+            heading: ['Archivo', 'sans-serif'],
+            body:    ['Inter', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: #111111; color: #e0e0e0; }
+
+    /* NAV */
+    #navbar { transition: background 0.35s, box-shadow 0.35s; }
+    #navbar.scrolled {
+      background: rgba(10,10,10,0.95);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    /* HERO */
+    .hero-bg {
+      background:
+        radial-gradient(ellipse 80% 60% at 100% 40%, rgba(255,118,0,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 0% 80%, rgba(255,118,0,0.06) 0%, transparent 60%),
+        #111111;
+    }
+    .hero-grid {
+      background-image:
+        linear-gradient(rgba(255,118,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,118,0,0.03) 1px, transparent 1px);
+      background-size: 72px 72px;
+    }
+
+    /* WORD CYCLE */
+    .word-cycle span { display: none; }
+    .word-cycle span.active {
+      display: inline;
+      animation: fadeUp 0.5s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* SCROLL REVEAL */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    /* MOBILE MENU */
+    #mobile-menu {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+    }
+    #mobile-menu.open { max-height: 400px; opacity: 1; }
+
+    /* TRACK CARDS */
+    .track-card {
+      border: 1px solid #2a2a2a;
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .track-card:hover {
+      border-color: rgba(255,118,0,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,118,0,0.1);
+    }
+    .track-badge {
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+    }
+
+    /* AREA CARDS */
+    .area-card {
+      border: 1px solid #222;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .area-card:hover { border-color: rgba(255,118,0,0.3); transform: translateY(-3px); }
+    .area-num { transition: color 0.2s; }
+    .area-card:hover .area-num { color: #ff7600; }
+
+    /* PROCESS STEPS */
+    .step-line {
+      position: absolute;
+      top: 24px; left: calc(50% + 24px);
+      width: calc(100% - 48px);
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,118,0,0.4), rgba(255,118,0,0.1));
+    }
+
+    /* BUTTONS */
+    .btn-brand {
+      display: inline-block;
+      background: #ff7600;
+      color: #fff;
+      font-family: 'Archivo', sans-serif;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 8px;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      cursor: pointer; border: none; text-decoration: none;
+    }
+    .btn-brand:hover {
+      background: #e56a00;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,118,0,0.35);
+    }
+    .btn-ghost {
+      display: inline-block;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.8);
+      font-family: 'Archivo', sans-serif;
+      font-weight: 600;
+      padding: 13px 32px;
+      border-radius: 8px;
+      letter-spacing: 0.02em;
+      transition: border-color 0.2s, color 0.2s;
+      text-decoration: none;
+    }
+    .btn-ghost:hover { border-color: #ff7600; color: #ff7600; }
+
+    /* FORM */
+    .form-input {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff; border-radius: 8px;
+      padding: 14px 18px; width: 100%; outline: none;
+      font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-input:focus { border-color: #ff7600; background: rgba(255,118,0,0.04); }
+
+    /* SECTION LABEL */
+    .section-label {
+      display: inline-block;
+      font-family: 'Archivo', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: #ff7600; margin-bottom: 14px;
+    }
+
+    /* COMING SOON GRADIENT */
+    .coming-soon-bg {
+      background: linear-gradient(135deg, #1a1a1a 0%, #1f1200 50%, #1a1a1a 100%);
+      border: 1px solid rgba(255,118,0,0.2);
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ff7600; }
+  </style>
+</head>
+
+<body class="antialiased">
+
+  <!-- ══════════════════════════════════════════════════════ NAV -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+      <div class="flex items-center justify-between h-16">
+        <a href="#hero" class="flex-shrink-0">
+          <img src="assets/logo.svg" alt="Holteck" class="h-7 w-auto" />
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#services" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Services</a>
+          <a href="#how-it-works" class="text-white/60 hover:text-white text-sm font-medium transition-colors">How it works</a>
+          <a href="#areas" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Areas</a>
+          <a href="#coming-soon" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Roadmap</a>
+          <a href="#contact" class="btn-brand text-sm py-2.5 px-6">Let's talk</a>
+        </div>
+        <button id="hamburger" class="md:hidden p-2 flex flex-col gap-1.5" aria-label="Menu">
+          <span class="block w-6 h-0.5 bg-white/80"></span>
+          <span class="block w-6 h-0.5 bg-white/80"></span>
+          <span class="block w-4 h-0.5 bg-white/80"></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="flex flex-col gap-1 py-4 border-t border-white/5">
+          <a href="#services"     class="mob-link text-white/70 hover:text-white py-2.5 text-sm">Services</a>
+          <a href="#how-it-works" class="mob-link text-white/70 hover:text-white py-2.5 text-sm">How it works</a>
+          <a href="#areas"        class="mob-link text-white/70 hover:text-white py-2.5 text-sm">Areas</a>
+          <a href="#coming-soon"  class="mob-link text-white/70 hover:text-white py-2.5 text-sm">Roadmap</a>
+          <a href="#contact"      class="mob-link btn-brand mt-2 text-sm text-center">Let's talk</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════════ HERO -->
+  <section id="hero" class="hero-bg relative min-h-screen flex items-center overflow-hidden">
+    <div class="absolute inset-0 hero-grid pointer-events-none"></div>
+
+    <!-- Orbs -->
+    <div class="absolute top-1/3 right-1/4 w-72 h-72 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute bottom-1/4 right-1/3 w-96 h-96 bg-brand/5 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative max-w-6xl mx-auto px-6 lg:px-10 py-32 w-full">
+      <div class="max-w-3xl">
+
+        <!-- AI badge -->
+        <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 mb-8">
+          <span class="w-1.5 h-1.5 bg-brand rounded-full animate-pulse"></span>
+          <span class="text-brand text-xs font-heading font-semibold tracking-widest uppercase">AI-Powered QA Agency</span>
+        </div>
+
+        <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-extrabold text-white leading-[1.05] tracking-tight">
+          Quality you<br />
+          can ship with<br />
+          <span class="text-brand word-cycle" id="wordCycle">
+            <span class="active">confidence.</span>
+            <span>speed.</span>
+            <span>precision.</span>
+            <span>trust.</span>
+          </span>
+        </h1>
+
+        <p class="mt-7 text-lg text-white/50 max-w-xl leading-relaxed font-light">
+          AI-powered quality. Perfected by people.<br />
+          Traditional QA. AI-accelerated pipelines. Behavioral evaluation of AI systems.
+        </p>
+
+        <div class="flex flex-wrap gap-4 mt-10">
+          <a href="#services" class="btn-brand">Explore Services</a>
+          <a href="#contact"  class="btn-ghost">Book a call</a>
+        </div>
+
+        <!-- Proof bar -->
+        <div class="flex flex-wrap gap-10 mt-16 pt-10 border-t border-white/8">
+          <div>
+            <p class="text-3xl font-heading font-extrabold text-white">18+</p>
+            <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">Years in QA</p>
+          </div>
+          <div>
+            <p class="text-3xl font-heading font-extrabold text-white">3</p>
+            <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">Service tracks</p>
+          </div>
+          <div>
+            <p class="text-3xl font-heading font-extrabold text-white">8+</p>
+            <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">Testing disciplines</p>
+          </div>
+          <div>
+            <p class="text-3xl font-heading font-extrabold text-white">AI</p>
+            <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">At every layer</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30 pointer-events-none">
+      <span class="text-white text-xs tracking-[0.2em] uppercase">Scroll</span>
+      <div class="w-px h-10 bg-white/50 animate-pulse"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ SERVICES -->
+  <section id="services" class="bg-dark py-28">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="text-center mb-16 reveal">
+        <span class="section-label">What we do</span>
+        <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1">Three service tracks.<br />One quality standard.</h2>
+        <p class="mt-4 text-white/40 max-w-lg mx-auto">Choose the level of AI involvement that fits your team — from classic QA to full AI-driven pipelines.</p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+        <!-- Track 1: Traditional QA -->
+        <div class="track-card bg-card rounded-2xl p-8 flex flex-col reveal">
+          <div class="flex items-start justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+              <svg class="w-6 h-6 text-white/70" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span class="track-badge bg-white/5 text-white/40">Classic</span>
+          </div>
+          <h3 class="font-heading text-xl font-bold text-white mb-3">Traditional QA</h3>
+          <p class="text-white/50 text-sm leading-relaxed flex-1">
+            Hands-on QA by experienced professionals. Manual testing, automation, functional, regression, API, mobile — everything your software needs before it ships.
+          </p>
+          <ul class="mt-6 space-y-2">
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Manual &amp; Automated Testing</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Functional &amp; Regression</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>API, Mobile &amp; Web</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Outsourced QA teams</li>
+          </ul>
+          <a href="#contact" class="mt-8 btn-ghost text-sm text-center">Get started</a>
+        </div>
+
+        <!-- Track 2: AI-Driven QA (featured) -->
+        <div class="track-card bg-card rounded-2xl p-8 flex flex-col reveal border-brand/30 relative overflow-hidden" style="transition-delay:0.08s">
+          <!-- Glow -->
+          <div class="absolute top-0 right-0 w-48 h-48 bg-brand/8 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="flex items-start justify-between mb-6 relative">
+            <div class="w-12 h-12 rounded-xl bg-brand/15 flex items-center justify-center">
+              <svg class="w-6 h-6 text-brand" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+            </div>
+            <span class="track-badge bg-brand/15 text-brand">AI-Powered</span>
+          </div>
+          <h3 class="font-heading text-xl font-bold text-white mb-3 relative">AI-Driven QA</h3>
+          <p class="text-white/50 text-sm leading-relaxed flex-1 relative">
+            QA accelerated by AI. Requirements in — test plans, automated Playwright specs, executed results, and filed bug reports out. Human-led methodology, AI-amplified speed.
+          </p>
+          <ul class="mt-6 space-y-2 relative">
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Requirements → Test plan (AI)</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Auto-generated Playwright specs</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>AI-analyzed results &amp; bug reports</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Jira &amp; Azure DevOps output</li>
+          </ul>
+          <a href="#how-it-works" class="mt-8 btn-brand text-sm text-center relative">See how it works</a>
+        </div>
+
+        <!-- Track 3: QA for AI -->
+        <div class="track-card bg-card rounded-2xl p-8 flex flex-col reveal" style="transition-delay:0.16s">
+          <div class="flex items-start justify-between mb-6">
+            <div class="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+              <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/>
+              </svg>
+            </div>
+            <span class="track-badge bg-white/5 text-white/40">Frontier</span>
+          </div>
+          <h3 class="font-heading text-xl font-bold text-white mb-3">QA for AI Systems</h3>
+          <p class="text-white/50 text-sm leading-relaxed flex-1">
+            Behavioral evaluation of LLMs and conversational AI. We don't just test if the AI works — we evaluate how it behaves. Hallucination detection, consistency analysis, tone drift, reasoning stability.
+          </p>
+          <ul class="mt-6 space-y-2">
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Hallucination detection</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Behavioral consistency testing</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Reasoning &amp; tone evaluation</li>
+            <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Structured behavior reports</li>
+          </ul>
+          <a href="#coming-soon" class="mt-8 btn-ghost text-sm text-center opacity-70">Early access →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ HOW IT WORKS -->
+  <section id="how-it-works" class="bg-mid py-28">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="text-center mb-16 reveal">
+        <span class="section-label">The AI-Driven pipeline</span>
+        <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1">From requirement to bug report.</h2>
+        <p class="mt-4 text-white/40 max-w-lg mx-auto">A requirements-first approach — tests are generated from what the software <em>should do</em>, not from what was built.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-0">
+
+        <!-- Step 1 -->
+        <div class="reveal flex flex-col items-center text-center relative">
+          <div class="hidden md:block step-line"></div>
+          <div class="w-12 h-12 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mb-4 relative z-10">
+            <span class="font-heading font-bold text-brand text-sm">01</span>
+          </div>
+          <h4 class="font-heading font-bold text-white text-sm mb-2">User Story</h4>
+          <p class="text-white/40 text-xs leading-relaxed">Acceptance criteria &amp; requirements as input</p>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="reveal flex flex-col items-center text-center relative" style="transition-delay:0.08s">
+          <div class="hidden md:block step-line"></div>
+          <div class="w-12 h-12 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mb-4 relative z-10">
+            <span class="font-heading font-bold text-brand text-sm">02</span>
+          </div>
+          <h4 class="font-heading font-bold text-white text-sm mb-2">Test Plan</h4>
+          <p class="text-white/40 text-xs leading-relaxed">AI generates scope, strategy &amp; risk assessment</p>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="reveal flex flex-col items-center text-center relative" style="transition-delay:0.16s">
+          <div class="hidden md:block step-line"></div>
+          <div class="w-12 h-12 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mb-4 relative z-10">
+            <span class="font-heading font-bold text-brand text-sm">03</span>
+          </div>
+          <h4 class="font-heading font-bold text-white text-sm mb-2">Test Cases + Playwright</h4>
+          <p class="text-white/40 text-xs leading-relaxed">AI writes atomic test cases and executable specs</p>
+        </div>
+
+        <!-- Step 4 -->
+        <div class="reveal flex flex-col items-center text-center relative" style="transition-delay:0.24s">
+          <div class="hidden md:block step-line"></div>
+          <div class="w-12 h-12 rounded-full bg-brand/15 border border-brand/30 flex items-center justify-center mb-4 relative z-10">
+            <span class="font-heading font-bold text-brand text-sm">04</span>
+          </div>
+          <h4 class="font-heading font-bold text-white text-sm mb-2">Execution</h4>
+          <p class="text-white/40 text-xs leading-relaxed">Tests run, results captured with pass/fail/skip</p>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="reveal flex flex-col items-center text-center" style="transition-delay:0.32s">
+          <div class="w-12 h-12 rounded-full bg-brand flex items-center justify-center mb-4">
+            <span class="font-heading font-bold text-white text-sm">05</span>
+          </div>
+          <h4 class="font-heading font-bold text-white text-sm mb-2">Bug Reports</h4>
+          <p class="text-white/40 text-xs leading-relaxed">AI files structured bugs in Jira or Azure DevOps</p>
+        </div>
+
+      </div>
+
+      <!-- Code sample box -->
+      <div class="mt-16 reveal">
+        <div class="bg-dark rounded-2xl border border-border overflow-hidden">
+          <div class="flex items-center gap-2 px-5 py-3 border-b border-border bg-card">
+            <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
+            <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
+            <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
+            <span class="ml-3 text-white/30 text-xs font-mono">output/REPORT.md — sample pipeline output</span>
+          </div>
+          <div class="p-6 font-mono text-xs leading-relaxed overflow-x-auto">
+            <p class="text-white/60"># QA Report — Todo list management</p>
+            <p class="text-white/30">Generated: 2026-04-04 00:34:11 UTC</p>
+            <br/>
+            <p class="text-white/60">## Summary</p>
+            <p><span class="text-green-400">Passed: 4</span> | <span class="text-red-400">Failed: 1</span> | <span class="text-yellow-400">Skipped: 1</span> | <span class="text-brand">Bugs filed: 1</span></p>
+            <br/>
+            <p class="text-white/60">## Execution Results</p>
+            <p><span class="text-white/30">TC-001</span> Add a new todo item &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 843ms</p>
+            <p><span class="text-white/30">TC-002</span> Mark a todo as complete &nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1102ms</p>
+            <p><span class="text-white/30">TC-003</span> Delete a todo item &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-red-400">❌ failed</span> &nbsp; 3021ms</p>
+            <p><span class="text-white/30">TC-006</span> Submit empty todo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-yellow-400">⏭ skipped</span></p>
+            <br/>
+            <p class="text-white/60">## Bug Report — TC-003</p>
+            <p class="text-white/40">Delete button not reliably clickable via hover</p>
+            <p><span class="text-brand">Severity:</span> <span class="text-white/40">minor</span> &nbsp; <span class="text-brand">Filed to:</span> <span class="text-white/40">Jira / Azure DevOps</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-10 reveal">
+        <a href="https://github.com/cgarciamx80/qa-ai-workflow" target="_blank" rel="noopener" class="btn-ghost text-sm">
+          View the open-source project on GitHub →
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ AREAS -->
+  <section id="areas" class="bg-dark py-28">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="text-center mb-16 reveal">
+        <span class="section-label">Coverage</span>
+        <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1">Areas of service</h2>
+        <p class="mt-4 text-white/40 max-w-lg mx-auto">End-to-end quality coverage across the full testing spectrum — applied to all three service tracks.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <div class="area-card reveal bg-card rounded-xl p-6">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">01</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Functional Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Ensuring all functionalities work according to specified requirements and perform their intended functions correctly.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.05s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">02</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Performance Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Assessing speed, responsiveness, and stability under various conditions to ensure optimal performance.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.1s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">03</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Usability Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Evaluating UI and UX to ensure your software is intuitive, user-friendly, and meets user needs.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.15s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">04</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Compatibility Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Ensuring software performs well across different devices, browsers, operating systems, and network environments.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.2s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">05</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Regression Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Verifying that new code changes do not adversely affect the existing functionality of the software.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.25s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">06</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">API Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Testing APIs for functionality, reliability, performance, and security expectations.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.3s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">07</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Mobile Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">Comprehensive testing across devices, OS versions, and network conditions for seamless mobile experiences.</p>
+        </div>
+
+        <div class="area-card reveal bg-card rounded-xl p-6" style="transition-delay:0.35s">
+          <p class="area-num font-heading text-4xl font-extrabold text-white/8 mb-3">08</p>
+          <h3 class="font-heading font-bold text-white text-sm mb-2">Web Testing</h3>
+          <p class="text-white/40 text-xs leading-relaxed">End-to-end web app validation across browsers and devices for reliability, security, and usability.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ COMING SOON -->
+  <section id="coming-soon" class="bg-mid py-28">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="coming-soon-bg rounded-3xl p-10 md:p-16 reveal">
+        <div class="max-w-2xl">
+          <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 mb-8">
+            <span class="w-1.5 h-1.5 bg-brand rounded-full animate-pulse"></span>
+            <span class="text-brand text-xs font-heading font-semibold tracking-widest uppercase">In development — Early access</span>
+          </div>
+          <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1 mb-6">The next frontier:<br />QA for AI systems.</h2>
+          <p class="text-white/50 leading-relaxed mb-6">
+            Most QA frameworks test whether software does what it's supposed to. But how do you test an AI that doesn't behave deterministically?
+          </p>
+          <p class="text-white/50 leading-relaxed mb-8">
+            We're building a behavioral evaluation framework for LLMs and conversational AI — classifying hallucinations, tone drift, reasoning instability, contextual failures, and more. Not pass/fail. Behavioral analysis.
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="font-heading font-bold text-white text-sm mb-1">Hallucination Detection</p>
+              <p class="text-white/40 text-xs">Identify when AI systems produce confident but incorrect or fabricated responses.</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="font-heading font-bold text-white text-sm mb-1">Behavioral Consistency</p>
+              <p class="text-white/40 text-xs">Evaluate if the AI responds consistently to similar prompts across sessions.</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="font-heading font-bold text-white text-sm mb-1">Reasoning Stability</p>
+              <p class="text-white/40 text-xs">Detect overconfidence, logical drift, and unstable reasoning patterns.</p>
+            </div>
+            <div class="bg-white/5 rounded-xl p-4">
+              <p class="font-heading font-bold text-white text-sm mb-1">Tone &amp; Safety Patterns</p>
+              <p class="text-white/40 text-xs">Track unexpected tone shifts, bias indicators, and safety-critical behaviors.</p>
+            </div>
+          </div>
+
+          <a href="#contact" class="btn-brand">Request early access</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ CONTACT -->
+  <section id="contact" class="bg-dark py-28">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+
+        <!-- Left -->
+        <div class="reveal">
+          <span class="section-label">Get in touch</span>
+          <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1 mb-6">Let's talk<br />quality.</h2>
+          <p class="text-white/50 leading-relaxed mb-8">
+            Whether you need traditional QA coverage, an AI-accelerated testing pipeline, or want early access to our AI behavioral evaluation framework — we want to hear about your project.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-brand/10 flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4 text-brand" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
+              </div>
+              <a href="mailto:connect@holteck.com" class="text-white/60 hover:text-white transition-colors text-sm">connect@holteck.com</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: form -->
+        <div class="reveal" style="transition-delay:0.1s">
+          <form id="contactForm" action="https://formspree.io/f/xdapranv" method="POST" class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-white/40 mb-1.5 font-medium uppercase tracking-wider">Name *</label>
+                <input type="text" name="name" class="form-input" placeholder="Carlos García" required />
+              </div>
+              <div>
+                <label class="block text-xs text-white/40 mb-1.5 font-medium uppercase tracking-wider">Email *</label>
+                <input type="email" name="email" class="form-input" placeholder="you@company.com" required />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs text-white/40 mb-1.5 font-medium uppercase tracking-wider">Company</label>
+              <input type="text" name="company" class="form-input" placeholder="Your company" />
+            </div>
+            <div>
+              <label class="block text-xs text-white/40 mb-1.5 font-medium uppercase tracking-wider">Service interest</label>
+              <select name="service" class="form-input" style="appearance:none">
+                <option value="" disabled selected style="background:#1a1a1a">Select a track...</option>
+                <option value="traditional" style="background:#1a1a1a">Traditional QA</option>
+                <option value="ai-driven" style="background:#1a1a1a">AI-Driven QA</option>
+                <option value="qa-for-ai" style="background:#1a1a1a">QA for AI Systems (early access)</option>
+                <option value="unsure" style="background:#1a1a1a">Not sure yet</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-white/40 mb-1.5 font-medium uppercase tracking-wider">Message</label>
+              <textarea name="message" rows="4" class="form-input resize-none" placeholder="Tell us about your project..."></textarea>
+            </div>
+            <!-- Honeypot -->
+            <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
+            <input type="hidden" name="_subject" value="New inquiry from holteck.com" />
+
+            <button type="submit" class="btn-brand w-full">Send message</button>
+
+            <div id="formSuccess" class="hidden bg-green-500/10 border border-green-500/20 rounded-xl p-5 text-center">
+              <p class="font-heading font-bold text-white">Message sent!</p>
+              <p class="text-white/50 text-sm mt-1">We'll get back to you at connect@holteck.com</p>
+            </div>
+            <div id="formError" class="hidden bg-red-500/10 border border-red-500/20 rounded-xl p-5 text-center">
+              <p class="text-white/70 text-sm">Something went wrong. Please email us directly at <a href="mailto:connect@holteck.com" class="text-brand">connect@holteck.com</a></p>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════════ FOOTER -->
+  <footer class="bg-darker border-t border-white/5 py-10">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <img src="assets/logo.svg" alt="Holteck" class="h-6 opacity-50" />
+          <p class="text-white/25 text-sm">© 2026 Holteck. All rights reserved.</p>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/cgarciamx80" target="_blank" rel="noopener" class="text-white/30 hover:text-white/70 transition-colors text-sm">GitHub</a>
+          <a href="privacy-policy.html" class="text-white/30 hover:text-white/70 transition-colors text-sm">Privacy Policy</a>
+          <a href="mailto:connect@holteck.com" class="text-white/30 hover:text-white/70 transition-colors text-sm">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════════════════════ JS -->
+  <script>
+    // NAV scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+    // Word cycle
+    const words = document.querySelectorAll('#wordCycle span');
+    let cur = 0;
+    setInterval(() => {
+      words[cur].classList.remove('active');
+      cur = (cur + 1) % words.length;
+      words[cur].classList.add('active');
+    }, 2800);
+
+    // Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Contact form via Formspree
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.reset();
+          document.getElementById('formSuccess').classList.remove('hidden');
+          btn.classList.add('hidden');
+        } else {
+          document.getElementById('formError').classList.remove('hidden');
+          btn.textContent = 'Send message';
+          btn.disabled = false;
+        }
+      } catch {
+        document.getElementById('formError').classList.remove('hidden');
+        btn.textContent = 'Send message';
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
