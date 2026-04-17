@@ -450,24 +450,28 @@
             <div class="w-3 h-3 rounded-full bg-red-500/60"></div>
             <div class="w-3 h-3 rounded-full bg-yellow-500/60"></div>
             <div class="w-3 h-3 rounded-full bg-green-500/60"></div>
-            <span class="ml-3 text-white/30 text-xs font-mono">output/REPORT.md — sample pipeline output</span>
+            <span class="ml-3 text-white/30 text-xs font-mono">output/REPORT.md — real pipeline output</span>
           </div>
           <div class="p-6 font-mono text-xs leading-relaxed overflow-x-auto">
             <p class="text-white/60"># QA Report — Todo list management</p>
-            <p class="text-white/30">Generated: 2026-04-04 00:34:11 UTC</p>
+            <p class="text-white/30">Generated: 2026-04-10 01:30:51 UTC</p>
             <br/>
             <p class="text-white/60">## Summary</p>
-            <p><span class="text-green-400">Passed: 4</span> | <span class="text-red-400">Failed: 1</span> | <span class="text-yellow-400">Skipped: 1</span> | <span class="text-brand">Bugs filed: 1</span></p>
+            <p><span class="text-green-400">Passed: 5</span> | <span class="text-red-400">Failed: 3</span> | <span class="text-yellow-400">Skipped: 0</span> | <span class="text-brand">Bugs filed: 3</span></p>
             <br/>
             <p class="text-white/60">## Execution Results</p>
-            <p><span class="text-white/30">TC-001</span> Add a new todo item &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 843ms</p>
-            <p><span class="text-white/30">TC-002</span> Mark a todo as complete &nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1102ms</p>
-            <p><span class="text-white/30">TC-003</span> Delete a todo item &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-red-400">❌ failed</span> &nbsp; 3021ms</p>
-            <p><span class="text-white/30">TC-006</span> Submit empty todo &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-yellow-400">⏭ skipped</span></p>
+            <p><span class="text-white/30">TC-001</span> Add a new todo by typing and pressing Enter &nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1512ms</p>
+            <p><span class="text-white/30">TC-002</span> Mark a todo as complete via checkbox &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1095ms</p>
+            <p><span class="text-white/30">TC-003</span> Delete a todo using the delete button &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-red-400">❌ failed</span> &nbsp; 30067ms</p>
+            <p><span class="text-white/30">TC-004</span> Completed todos display with strikethrough &nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1251ms</p>
+            <p><span class="text-white/30">TC-005</span> Reject empty todo on Enter &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1088ms</p>
+            <p><span class="text-white/30">TC-006</span> Todo count after add, complete, delete &nbsp;&nbsp;&nbsp;&nbsp; <span class="text-red-400">❌ failed</span> &nbsp; 30102ms</p>
+            <p><span class="text-white/30">TC-007</span> Special characters and long text &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-green-400">✅ passed</span> &nbsp; 1268ms</p>
+            <p><span class="text-white/30">TC-008</span> Delete all todos, verify empty state &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="text-red-400">❌ failed</span> &nbsp; 30083ms</p>
             <br/>
-            <p class="text-white/60">## Bug Report — TC-003</p>
-            <p class="text-white/40">Delete button not reliably clickable via hover</p>
-            <p><span class="text-brand">Severity:</span> <span class="text-white/40">minor</span> &nbsp; <span class="text-brand">Filed to:</span> <span class="text-white/40">Jira / Azure DevOps</span></p>
+            <p class="text-white/60">## Bug Report — TC-003, TC-006, TC-008</p>
+            <p class="text-white/40">Delete todo button causes timeout — operation hangs indefinitely</p>
+            <p><span class="text-brand">Severity:</span> <span class="text-white/40">critical</span> &nbsp; <span class="text-brand">Filed to:</span> <span class="text-white/40">Jira / Azure DevOps</span></p>
           </div>
         </div>
       </div>
