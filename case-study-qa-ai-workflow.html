@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8HR19CQRGG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8HR19CQRGG');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI QA Audit Report — qa-ai-workflow — Holteck</title>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cyan:     #00d4ff;
+      --dark:     #0a0c0f;
+      --ink:      #1a1d23;
+      --surface:  #f8f9fb;
+      --border:   #e2e5ea;
+      --muted:    #6b7280;
+      --critical: #dc2626;
+      --high:     #ea580c;
+      --medium:   #ca8a04;
+      --low:      #16a34a;
+      --pass:     #16a34a;
+      --fail:     #dc2626;
+      --partial:  #ca8a04;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f8f9fb;
+      color: var(--ink);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .page {
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      max-width: 900px; margin: 0 auto; padding: 0 40px 60px;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      background: var(--dark);
+      color: #fff;
+      padding: 60px 60px 50px;
+      margin: 0 -40px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cover::after {
+      content: '';
+      position: absolute; top: 0; right: 0;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(0,212,255,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cover-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 24px;
+    }
+    .cover h1 {
+      font-family: 'Archivo', sans-serif;
+      font-size: 32px; font-weight: 800;
+      line-height: 1.15; color: #fff;
+      margin-bottom: 8px;
+    }
+    .cover-sub {
+      font-size: 16px; color: rgba(255,255,255,0.5);
+      margin-bottom: 40px;
+    }
+    .cover-meta {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 24px; border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 32px;
+    }
+    .cover-meta-item label {
+      display: block; font-size: 10px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 4px;
+    }
+    .cover-meta-item span {
+      font-size: 14px; font-weight: 600; color: #fff;
+    }
+    .risk-badge {
+      display: inline-block;
+      padding: 2px 10px; border-radius: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.08em;
+    }
+    .risk-high { background: rgba(234,88,12,0.2); color: #fdba74; border: 1px solid rgba(234,88,12,0.4); }
+    .risk-medium { background: rgba(202,138,4,0.2); color: #fde047; border: 1px solid rgba(202,138,4,0.4); }
+    .risk-low { background: rgba(22,163,74,0.2); color: #86efac; border: 1px solid rgba(22,163,74,0.4); }
+
+    /* ── SECTION ── */
+    .section { margin-bottom: 48px; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--cyan);
+      margin-bottom: 8px;
+    }
+    .section h2 {
+      font-family: 'Archivo', sans-serif;
+      font-size: 20px; font-weight: 700;
+      color: var(--ink); margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    /* ── METRICS ROW ── */
+    .metrics {
+      display: grid; grid-template-columns: repeat(6, 1fr);
+      gap: 1px; background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      margin-bottom: 32px;
+    }
+    .metric { background: #fff; padding: 18px 12px; text-align: center; }
+    .metric-value {
+      font-family: 'Archivo', sans-serif;
+      font-size: 28px; font-weight: 800; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .metric-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .metric-value.total { color: var(--ink); }
+    .metric-value.pass  { color: var(--pass); }
+    .metric-value.fail  { color: var(--fail); }
+    .metric-value.h     { color: var(--high); }
+    .metric-value.m     { color: var(--medium); }
+    .metric-value.info  { color: var(--cyan); }
+
+    /* ── SUMMARY BOX ── */
+    .summary-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--high);
+      border-radius: 8px; padding: 20px 24px;
+      margin-bottom: 16px;
+    }
+    .summary-box p { color: #374151; line-height: 1.7; }
+    .summary-box p + p { margin-top: 12px; }
+
+    /* ── SCENARIOS TABLE ── */
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead th {
+      background: var(--ink); color: #fff;
+      font-family: 'DM Mono', monospace;
+      font-size: 9px; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 10px 12px;
+      text-align: left; font-weight: 500;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:hover { background: var(--surface); }
+    tbody td { padding: 9px 12px; vertical-align: middle; }
+    .tc-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+    .tc-name { font-weight: 500; color: var(--ink); }
+    .tc-category { color: var(--muted); font-size: 11px; }
+    .badge {
+      display: inline-block; padding: 2px 7px; border-radius: 3px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; font-weight: 500;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .badge-high     { background: #fff7ed; color: var(--high);     border: 1px solid #fed7aa; }
+    .badge-medium   { background: #fefce8; color: var(--medium);   border: 1px solid #fef08a; }
+    .badge-low      { background: #f0fdf4; color: var(--low);      border: 1px solid #bbf7d0; }
+    .badge-pass     { background: #f0fdf4; color: var(--pass);     border: 1px solid #bbf7d0; }
+    .badge-fail     { background: #fef2f2; color: var(--fail);     border: 1px solid #fecaca; }
+    .badge-info     { background: #f0fdff; color: #0891b2;         border: 1px solid #a5f3fc; }
+
+    /* ── FINDING CARD ── */
+    .finding {
+      border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .finding-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 20px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+    }
+    .finding-id { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+    .finding-title { font-family: 'Archivo', sans-serif; font-weight: 700; font-size: 14px; color: var(--ink); flex: 1; }
+    .finding-body { padding: 20px; }
+    .finding-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .finding-field label {
+      display: block; font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+    }
+    .finding-field p { color: var(--ink); line-height: 1.6; }
+    .finding-field.full { grid-column: 1 / -1; }
+    .rec-box {
+      background: #f0fdf4; border: 1px solid #bbf7d0;
+      border-left: 3px solid var(--low);
+      border-radius: 6px; padding: 14px 16px; margin-top: 16px;
+    }
+    .rec-box label {
+      display: block; font-family: 'DM Mono', monospace;
+      font-size: 10px; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--low); margin-bottom: 6px;
+    }
+    .rec-box p { color: #166534; line-height: 1.6; }
+
+    /* ── RECOMMENDATIONS TABLE ── */
+    .rec-table td:first-child { width: 80px; }
+    .rec-table td:nth-child(2) { width: 120px; }
+    .rec-num { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; color: var(--muted); }
+
+    /* ── FOOTER ── */
+    .report-footer {
+      border-top: 1px solid var(--border);
+      padding-top: 24px; margin-top: 48px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .report-footer p { font-size: 11px; color: var(--muted); }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: #fff; }
+      .cover { margin: 0 0 48px; }
+      .page { padding: 0 24px 40px; box-shadow: none; }
+      .finding { break-inside: avoid; }
+      .section { break-inside: avoid; }
+      thead { display: table-header-group; }
+    }
+    @page { margin: 20mm 18mm; size: A4; }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- COVER -->
+  <div class="cover">
+    <img src="assets/logo.svg" alt="Holteck" style="height:28px; width:auto; margin-bottom:32px; opacity:0.9;" />
+    <div class="cover-label">AI QA Audit Report · Case Study</div>
+    <h1>qa-ai-workflow —<br />AI Pipeline QA Audit</h1>
+    <div class="cover-sub">Behavioral evaluation, resilience analysis & failure mode mapping</div>
+    <div class="cover-meta">
+      <div class="cover-meta-item">
+        <label>System</label>
+        <span>qa-ai-workflow v1.0</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Type</label>
+        <span>AI Pipeline (CLI)</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Audit Date</label>
+        <span>April 2026</span>
+      </div>
+      <div class="cover-meta-item">
+        <label>Overall Risk</label>
+        <span><span class="risk-badge risk-medium">MEDIUM</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="section">
+    <div class="section-label">// Test Coverage</div>
+    <h2>Audit Summary</h2>
+    <div class="metrics">
+      <div class="metric"><div class="metric-value total">30</div><div class="metric-label">Scenarios</div></div>
+      <div class="metric"><div class="metric-value pass">21</div><div class="metric-label">Passed</div></div>
+      <div class="metric"><div class="metric-value fail">5</div><div class="metric-label">Findings</div></div>
+      <div class="metric"><div class="metric-value h">2</div><div class="metric-label">High</div></div>
+      <div class="metric"><div class="metric-value m">3</div><div class="metric-label">Medium</div></div>
+      <div class="metric"><div class="metric-value info">4</div><div class="metric-label">Info</div></div>
+    </div>
+
+    <div class="summary-box">
+      <p>The <strong>qa-ai-workflow</strong> pipeline demonstrates solid engineering fundamentals: clean stage separation, consistent mock mode behavior across all 4 agents, robust CLI argument validation, and well-structured output artifacts. The system handles expected error conditions (missing API key, invalid story files, missing paths) correctly and exits with informative messages.</p>
+      <p>However, two High-severity findings were identified that affect output fidelity and silent failure risk. The most significant: the QA Analysis narrative generated by Stage 4 (Claude Analyzer agent) is <strong>never written to REPORT.md</strong> — the most valuable output of the entire pipeline is silently discarded. A second High finding: tests with an empty <code>results[]</code> array are classified as "failed" rather than "unknown", producing false failure counts. Three Medium findings relate to token limits, type safety, and an edge case in the code fence stripper.</p>
+    </div>
+  </div>
+
+  <!-- SCENARIOS TABLE -->
+  <div class="section">
+    <div class="section-label">// Test Execution</div>
+    <h2>Test Scenarios</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Scenario</th>
+          <th>Category</th>
+          <th>Result</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="tc-id">TS-001</td><td class="tc-name">Missing API key exits with clear error</td><td class="tc-category">Error Handling</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-002</td><td class="tc-name">Mock mode intercepts all 4 pipeline stages</td><td class="tc-category">Core Feature</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-003</td><td class="tc-name">Test plan count within requested 5-8 range</td><td class="tc-category">AI Output</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-004</td><td class="tc-name">All TestCase required fields present, enums valid</td><td class="tc-category">Schema</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-005</td><td class="tc-name">Generated spec has no markdown fences</td><td class="tc-category">CodeGen</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-006</td><td class="tc-name">Generated spec uses semantic selectors only</td><td class="tc-category">CodeGen</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-007</td><td class="tc-name">TC-### IDs present in all test names</td><td class="tc-category">CodeGen</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-008</td><td class="tc-name">Test independence — no shared state or beforeAll</td><td class="tc-category">CodeGen</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-009</td><td class="tc-name">waitForLoadState present after all navigations</td><td class="tc-category">CodeGen</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-010</td><td class="tc-name">Results JSON parsed with valid statuses and IDs</td><td class="tc-category">Data</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-011</td><td class="tc-name">Bug reports filed only for failed tests</td><td class="tc-category">Logic</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-012</td><td class="tc-name">Bug reports have valid severity + dual format</td><td class="tc-category">Schema</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-013</td><td class="tc-name">REPORT.md contains all required sections</td><td class="tc-category">Report</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-014</td><td class="tc-name">Markdown tables have no broken rows</td><td class="tc-category">Report</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-015</td><td class="tc-name">All 4 output artifacts created after run</td><td class="tc-category">File I/O</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-016</td><td class="tc-name">--story flag loads and validates custom file</td><td class="tc-category">CLI</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-017</td><td class="tc-name">Invalid story structure rejected with clear error</td><td class="tc-category">CLI</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-018</td><td class="tc-name">--story with no path argument rejected</td><td class="tc-category">CLI</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-019</td><td class="tc-name">Non-existent story file path rejected</td><td class="tc-category">CLI</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-020</td><td class="tc-name">Empty acceptanceCriteria[] does not crash pipeline</td><td class="tc-category">Edge Case</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-021</td><td class="tc-name">Bug Reports section absent when no bugs filed</td><td class="tc-category">Report</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-022</td><td class="tc-name">Failed Tests section absent when all tests pass</td><td class="tc-category">Report</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr style="background:#fef2f2;"><td class="tc-id">TS-023</td><td class="tc-name">AI Analysis narrative written to REPORT.md</td><td class="tc-category">Report</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+        <tr style="background:#fef2f2;"><td class="tc-id">TS-024</td><td class="tc-name">Analysis text confirmed absent from report output</td><td class="tc-category">Report</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+        <tr><td class="tc-id">TS-025</td><td class="tc-name">TC-??? fallback on test names without ID pattern</td><td class="tc-category">Parsing</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-026</td><td class="tc-name">TypeScript type assertions without runtime validation</td><td class="tc-category">Type Safety</td><td><span class="badge badge-pass">PASS</span></td></tr>
+        <tr><td class="tc-id">TS-027</td><td class="tc-name">Planner max_tokens adequate for complex stories</td><td class="tc-category">Config</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+        <tr><td class="tc-id">TS-028</td><td class="tc-name">CodeGen fence strip handles trailing text after fence</td><td class="tc-category">CodeGen</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+        <tr style="background:#fef2f2;"><td class="tc-id">TS-029</td><td class="tc-name">Empty results[] classified as failed vs unknown</td><td class="tc-category">Data</td><td><span class="badge badge-fail">FAIL</span></td></tr>
+        <tr><td class="tc-id">TS-030</td><td class="tc-name">shell:true on spawnSync Windows compatibility</td><td class="tc-category">Runner</td><td><span class="badge badge-pass">PASS</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FINDINGS -->
+  <div class="section">
+    <div class="section-label">// Detailed Findings</div>
+    <h2>Findings</h2>
+
+    <!-- F-001 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-id">F-001</span>
+        <span class="finding-title">AI Analysis narrative is never written to REPORT.md</span>
+        <span class="badge badge-fail">HIGH</span>
+      </div>
+      <div class="finding-body">
+        <div class="finding-grid">
+          <div class="finding-field">
+            <label>Location</label>
+            <p><code>src/report/markdownReport.ts</code> — generateMarkdownReport()</p>
+          </div>
+          <div class="finding-field">
+            <label>Root Cause</label>
+            <p>The <code>analysis</code> field from <code>PipelineResult</code> is destructured but never pushed to the <code>lines[]</code> output array.</p>
+          </div>
+          <div class="finding-field full">
+            <label>User Impact</label>
+            <p>Stage 4 (Analyzer agent) produces a 2-3 paragraph QA narrative and root cause analysis — the highest-value AI-generated output in the entire pipeline. This text exists in <code>pipeline-result.json</code> but is completely absent from <code>REPORT.md</code>. Any user who opens the markdown report (the primary human-readable output) never sees the AI's analysis. The pipeline silently discards its most meaningful insight.</p>
+          </div>
+        </div>
+        <div class="rec-box">
+          <label>Recommendation</label>
+          <p>Add an "## Analysis" section to <code>markdownReport.ts</code> after the Summary block: <code>lines.push("## QA Analysis"); lines.push(result.analysis);</code>. This is a one-line fix that immediately surfaces the AI's interpretation of results to every consumer of REPORT.md.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- F-002 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-id">F-002</span>
+        <span class="finding-title">Tests with empty results[] array silently classified as "failed"</span>
+        <span class="badge badge-fail">HIGH</span>
+      </div>
+      <div class="finding-body">
+        <div class="finding-grid">
+          <div class="finding-field">
+            <label>Location</label>
+            <p><code>src/runner/playwrightRunner.ts</code> — results parsing loop, line ~48</p>
+          </div>
+          <div class="finding-field">
+            <label>Root Cause</label>
+            <p><code>test.results?.[0]</code> returns <code>undefined</code> when <code>results</code> is an empty array. The ternary falls through to the default <code>"failed"</code> branch.</p>
+          </div>
+          <div class="finding-field full">
+            <label>User Impact</label>
+            <p>When Playwright reports a test with no result entries (e.g. a test that was never attempted due to a setup error, or a pending test), it is classified as a failure and a bug report may be filed against it. This inflates failure counts, produces false bug reports in JIRA/ADO format, and erodes trust in the pipeline's output accuracy.</p>
+          </div>
+        </div>
+        <div class="rec-box">
+          <label>Recommendation</label>
+          <p>Add an explicit check: <code>if (!run) { status = "skipped"; }</code> before the status ternary, or use a third status value <code>"unknown"</code> to distinguish "never ran" from "explicitly skipped" and "failed". Also add a console warning when this case occurs so it's visible in pipeline output.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- F-003 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-id">F-003</span>
+        <span class="finding-title">Planner max_tokens (2000) insufficient for complex stories</span>
+        <span class="badge badge-high">MEDIUM</span>
+      </div>
+      <div class="finding-body">
+        <div class="finding-grid">
+          <div class="finding-field">
+            <label>Location</label>
+            <p><code>src/config.ts</code> — <code>maxTokens.planner: 2000</code></p>
+          </div>
+          <div class="finding-field">
+            <label>Root Cause</label>
+            <p>A full TestPlan JSON with 8 test cases, each having 5+ steps, can approach or exceed 1800 tokens. Complex user stories with 10+ acceptance criteria increase both prompt and response size.</p>
+          </div>
+          <div class="finding-field full">
+            <label>User Impact</label>
+            <p>When the Planner response is truncated, <code>JSON.parse(block.text)</code> throws a SyntaxError, crashing the pipeline at Stage 1 with an unhelpful error. The user sees a pipeline failure with no indication that the fix is to increase the token limit. This is a latent bug that only surfaces with real-world complex stories — it won't appear in mock mode or with the simple example story.</p>
+          </div>
+        </div>
+        <div class="rec-box">
+          <label>Recommendation</label>
+          <p>Increase <code>maxTokens.planner</code> from 2000 to 4000. Add a try/catch around <code>JSON.parse(block.text)</code> in planner.ts that provides a clear error message: "Planner response may have been truncated — try increasing maxTokens.planner in config.ts." </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- F-004 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-id">F-004</span>
+        <span class="finding-title">CodeGen fence stripper corrupts output when model adds trailing explanation</span>
+        <span class="badge badge-high">MEDIUM</span>
+      </div>
+      <div class="finding-body">
+        <div class="finding-grid">
+          <div class="finding-field">
+            <label>Location</label>
+            <p><code>src/agents/codeGen.ts</code> — line ~130, fence strip regex</p>
+          </div>
+          <div class="finding-field">
+            <label>Root Cause</label>
+            <p>The regex <code>.replace(/```$/m, '')</code> removes only the first closing fence it finds. When Claude adds explanation text after the closing fence (e.g. "This test file covers..."), the regex strips the fence but leaves the prose — which is written as-is into <code>generated.spec.ts</code>.</p>
+          </div>
+          <div class="finding-field full">
+            <label>User Impact</label>
+            <p>The generated spec file contains plain English prose appended after the TypeScript code, causing an immediate Playwright compilation error at Stage 3. The pipeline fails silently — <code>spawnSync</code> returns a non-zero exit code but the runner only warns if <code>results.json</code> is missing, not if Playwright itself errored. The user sees 0 tests executed with no explanation.</p>
+          </div>
+        </div>
+        <div class="rec-box">
+          <label>Recommendation</label>
+          <p>Replace the two-regex strip with a block extractor: find the first <code>```typescript</code> or <code>```ts</code> fence, then extract only the content up to the matching closing <code>```</code>. Alternatively, strengthen the prompt: "Return ONLY the raw TypeScript. If you include any explanation, the pipeline will fail." Add a post-strip TypeScript syntax check (e.g. verify the output starts with <code>import</code>) before writing to disk.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- F-005 -->
+    <div class="finding">
+      <div class="finding-header">
+        <span class="finding-id">F-005</span>
+        <span class="finding-title">Unsafe JSON.parse type casts with no runtime validation</span>
+        <span class="badge badge-medium">MEDIUM</span>
+      </div>
+      <div class="finding-body">
+        <div class="finding-grid">
+          <div class="finding-field">
+            <label>Location</label>
+            <p><code>src/agents/planner.ts:69</code>, <code>src/agents/analyzer.ts:92</code></p>
+          </div>
+          <div class="finding-field">
+            <label>Root Cause</label>
+            <p><code>JSON.parse(block.text) as TestPlan</code> and <code>JSON.parse(block.text) as { analysis, bugs }</code> are TypeScript-only type assertions — they provide no runtime guarantee that the parsed object matches the interface. Despite JSON Schema enforcement, edge cases (partial responses, SDK changes) can return valid JSON with wrong structure.</p>
+          </div>
+          <div class="finding-field full">
+            <label>User Impact</label>
+            <p>If the API returns valid JSON that doesn't match the expected interface, the error manifests as a runtime TypeError downstream (e.g. <code>plan.testCases is not iterable</code> in pipeline.ts line 26) — far from the actual source. Debugging requires tracing back through the pipeline. In production use with real client stories, this failure mode is non-obvious.</p>
+          </div>
+        </div>
+        <div class="rec-box">
+          <label>Recommendation</label>
+          <p>Add lightweight structural validation after parsing: check that <code>plan.testCases</code> is an array before proceeding, and that <code>analysis</code> is a string and <code>bugs</code> is an array. A small Zod schema or a manual guard function at each parse site would provide clear error messages and prevent silent downstream failures.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="section">
+    <div class="section-label">// Prioritized Actions</div>
+    <h2>Recommendations</h2>
+    <table class="rec-table">
+      <thead>
+        <tr><th>Ref</th><th>Priority</th><th>Action</th><th>Effort</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rec-num">R-01</td>
+          <td><span class="badge badge-fail">HIGH</span></td>
+          <td>Add <code>## QA Analysis</code> section to <code>markdownReport.ts</code> — push <code>result.analysis</code> to lines output</td>
+          <td>5 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-02</td>
+          <td><span class="badge badge-fail">HIGH</span></td>
+          <td>Guard <code>test.results?.[0]</code> — classify empty results as "unknown" not "failed"; add console warning</td>
+          <td>15 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-03</td>
+          <td><span class="badge badge-high">MEDIUM</span></td>
+          <td>Increase <code>maxTokens.planner</code> from 2000 → 4000; wrap <code>JSON.parse</code> in planner with informative catch</td>
+          <td>10 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-04</td>
+          <td><span class="badge badge-high">MEDIUM</span></td>
+          <td>Replace fence-strip regex with a block extractor; add import-statement guard before writing spec to disk</td>
+          <td>30 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-05</td>
+          <td><span class="badge badge-high">MEDIUM</span></td>
+          <td>Add structural validation after <code>JSON.parse</code> in planner and analyzer — check array/string types before pipeline continues</td>
+          <td>20 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-06</td>
+          <td><span class="badge badge-low">LOW</span></td>
+          <td>Surface Playwright runner exit code and stderr to pipeline output when tests fail to run</td>
+          <td>20 min</td>
+        </tr>
+        <tr>
+          <td class="rec-num">R-07</td>
+          <td><span class="badge badge-low">LOW</span></td>
+          <td>Add AC traceability — include which acceptance criterion each test case validates in test plan and report</td>
+          <td>1 hr</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="section">
+    <div class="section-label">// Methodology</div>
+    <h2>About This Audit</h2>
+    <p style="color:#374151; line-height:1.8; margin-bottom:12px;">
+      This audit was conducted by Holteck using a structured AI pipeline QA methodology. 30 test scenarios were designed and executed against the <strong>qa-ai-workflow</strong> codebase — covering API integration behavior, AI output quality, error handling, file I/O, CLI argument validation, code generation correctness, results parsing, report fidelity, and type safety edge cases.
+    </p>
+    <p style="color:#374151; line-height:1.8;">
+      Test execution combined static code analysis, dynamic mock-mode pipeline runs, and targeted unit-level scenario probes. Each finding was verified by directly observing the failure condition in the running system — not inferred from code review alone. This report reflects the state of the system as of April 2026.
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <div>
+      <img src="assets/logo.svg" alt="Holteck" style="height:22px; width:auto; opacity:0.5; margin-bottom:6px; display:block;" />
+      <p>AI QA Audits · holteck.com · connect@holteck.com</p>
+    </div>
+    <div style="text-align:right;">
+      <p>© 2026 Holteck. All rights reserved.</p>
+      <p style="margin-top:4px;">Request your audit at <strong>holteck.com/ai-audit</strong></p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

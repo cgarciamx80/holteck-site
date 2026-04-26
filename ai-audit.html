@@ -242,7 +242,7 @@
         <div class="mt-14 flex flex-wrap gap-6 text-sm font-mono text-brand-muted">
           <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> 20+ yrs QA experience</span>
           <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> Delivered in 48–72 hrs</span>
-          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> Starting at $300</span>
+          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> Starting at $700</span>
           <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> No integration required</span>
         </div>
       </div>
@@ -633,6 +633,39 @@
   </section>
 
 
+  <!-- ════════════════════════════════════════ CASE STUDY CALLOUT -->
+  <section class="py-16 border-t border-brand-border bg-brand-surface/40">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="bg-brand-surface border border-brand-cyan/20 rounded-2xl p-8 md:p-10 max-w-4xl mx-auto">
+        <div class="flex flex-col md:flex-row gap-8 items-start">
+          <div class="flex-1">
+            <div class="section-label mb-3">// Real Audit</div>
+            <h3 class="text-2xl font-black text-white mb-3">We audited our own AI pipeline</h3>
+            <p class="text-brand-muted font-body leading-relaxed mb-6">
+              To validate our methodology, we ran a full Core Audit on our own AI-powered QA tool —
+              a 4-stage pipeline using the Claude API. 30 test scenarios, 5 real findings,
+              including a critical bug where the entire AI analysis output was silently discarded
+              from every report.
+            </p>
+            <div class="flex flex-wrap gap-5 text-sm">
+              <span class="flex items-center gap-2 text-brand-muted"><span class="text-brand-cyan">✓</span> 30 scenarios executed</span>
+              <span class="flex items-center gap-2 text-brand-muted"><span class="text-brand-warn">⚠</span> 2 High severity findings</span>
+              <span class="flex items-center gap-2 text-brand-muted"><span class="text-brand-cyan">✓</span> All fixes with code references</span>
+            </div>
+          </div>
+          <div class="flex-shrink-0 md:pt-8">
+            <a href="case-study-qa-ai-workflow.html" target="_blank"
+              class="inline-flex items-center gap-2 border border-brand-cyan/40 text-brand-cyan font-semibold px-6 py-3 rounded-xl text-sm hover:bg-brand-cyan/10 transition-all">
+              Read the case study
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
   <!-- ════════════════════════════════════════ WHY HOLTECK -->
   <section class="py-24 border-t border-brand-border bg-brand-surface/40" id="why-holteck">
     <div class="max-w-6xl mx-auto px-6">
@@ -696,59 +729,79 @@
     <div class="max-w-6xl mx-auto px-6">
       <div class="text-center mb-12">
         <div class="section-label mb-4">// Pricing</div>
-        <h2 class="text-4xl font-black text-white">Simple, transparent pricing.</h2>
+        <h2 class="text-4xl font-black text-white mb-4">Simple, transparent pricing.</h2>
+        <p class="text-brand-muted font-body max-w-xl mx-auto">Enterprise firms charge $8K–$16K and take weeks. We deliver the same depth, faster.</p>
       </div>
 
-      <div class="max-w-md mx-auto">
-        <div class="bg-brand-surface border border-brand-cyan/30 rounded-2xl p-8 relative overflow-hidden">
-          <!-- Glow effect -->
-          <div class="absolute top-0 right-0 w-48 h-48 bg-brand-cyan/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
+      <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
 
-          <div class="relative">
-            <div class="text-xs font-mono text-brand-cyan uppercase tracking-widest mb-4">Starter AI QA Audit</div>
-            <div class="flex items-end gap-2 mb-2">
-              <span class="text-5xl font-black text-white">$300</span>
-              <span class="text-brand-muted font-body mb-2">starting</span>
-            </div>
-            <div class="text-brand-muted text-sm font-body mb-8">Delivered in 48–72 hours</div>
-
-            <div class="space-y-3 mb-8">
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">20–30 structured test scenarios</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">AI failure analysis</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">Risk classification report</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">Actionable fix recommendations</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">Client-ready audit document</span>
-              </div>
-              <div class="flex items-center gap-3 text-sm">
-                <span class="text-brand-cyan">✓</span>
-                <span class="text-white">Delivered in 48–72 hours</span>
-              </div>
-            </div>
-
-            <a href="#contact" class="btn-primary block w-full bg-brand-cyan text-black font-bold text-center py-4 rounded-xl text-base">
-              Request Audit
-            </a>
+        <!-- Tier 1: Diagnostic -->
+        <div class="bg-brand-surface border border-brand-border rounded-2xl p-8 card-hover flex flex-col">
+          <div class="text-xs font-mono text-brand-muted uppercase tracking-widest mb-5">Diagnostic</div>
+          <div class="text-4xl font-black text-white mb-1">$700</div>
+          <div class="text-brand-muted text-sm font-body mb-8">Delivered in 48 hours</div>
+          <div class="space-y-3 mb-8 flex-1">
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">8–12 test scenarios</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">1–2 critical findings</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Root cause + fix recommendation</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Summary report</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">5-min walkthrough video</span></div>
           </div>
+          <div class="text-xs text-brand-muted font-body mb-6 border-t border-brand-border pt-4">Best for: MVP validation, pre-launch check</div>
+          <a href="#contact" class="block w-full border border-brand-border text-white font-bold text-center py-3.5 rounded-xl text-sm hover:border-brand-cyan/40 hover:text-brand-cyan transition-all">
+            Request Diagnostic
+          </a>
         </div>
 
-        <p class="text-center text-brand-muted text-sm font-body mt-4">
-          Need a larger scope? <a href="mailto:connect@holteck.com" class="text-brand-cyan link-hover">Email us</a> for custom pricing.
-        </p>
+        <!-- Tier 2: Core Audit (FEATURED) -->
+        <div class="bg-brand-surface border border-brand-cyan/40 rounded-2xl p-8 card-hover flex flex-col relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-40 h-40 bg-brand-cyan/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
+          <div class="relative flex items-center justify-between mb-5">
+            <div class="text-xs font-mono text-brand-cyan uppercase tracking-widest">Core Audit</div>
+            <span class="bg-brand-cyan/10 border border-brand-cyan/30 text-brand-cyan text-xs font-bold px-2 py-0.5 rounded font-mono">RECOMMENDED</span>
+          </div>
+          <div class="text-4xl font-black text-white mb-1 relative">$2,400</div>
+          <div class="text-brand-muted text-sm font-body mb-8 relative">Delivered in 5–7 days</div>
+          <div class="space-y-3 mb-8 flex-1 relative">
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">25–35 test scenarios</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">5–8 detailed findings</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Code-level references (file + line)</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Root cause + user impact analysis</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Effort estimates per fix</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Full technical report</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">30-day remediation retest</span></div>
+          </div>
+          <div class="text-xs text-brand-muted font-body mb-6 border-t border-brand-cyan/20 pt-4 relative">Best for: Production AI systems, serious startups</div>
+          <a href="#contact" class="btn-primary block w-full bg-brand-cyan text-black font-bold text-center py-3.5 rounded-xl text-sm relative">
+            Request Core Audit
+          </a>
+        </div>
+
+        <!-- Tier 3: Deep Audit -->
+        <div class="bg-brand-surface border border-brand-border rounded-2xl p-8 card-hover flex flex-col">
+          <div class="text-xs font-mono text-brand-muted uppercase tracking-widest mb-5">Deep Audit</div>
+          <div class="text-4xl font-black text-white mb-1">$6,000</div>
+          <div class="text-brand-muted text-sm font-body mb-8">Delivered in 10–14 days</div>
+          <div class="space-y-3 mb-8 flex-1">
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">50+ test scenarios</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">10+ findings + edge cases</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Adversarial &amp; multi-agent testing</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Executive + technical reports</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Live 1-hour follow-up session</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">90-day support + re-audit</span></div>
+            <div class="flex items-start gap-3 text-sm"><span class="text-brand-cyan mt-0.5 flex-shrink-0">✓</span><span class="text-white">Compliance mapping (OWASP, NIST)</span></div>
+          </div>
+          <div class="text-xs text-brand-muted font-body mb-6 border-t border-brand-border pt-4">Best for: Enterprise, regulated industries</div>
+          <a href="#contact" class="block w-full border border-brand-border text-white font-bold text-center py-3.5 rounded-xl text-sm hover:border-brand-cyan/40 hover:text-brand-cyan transition-all">
+            Contact for Deep Audit
+          </a>
+        </div>
+
       </div>
+
+      <p class="text-center text-brand-muted text-sm font-body mt-8">
+        Not sure which tier fits? <a href="mailto:connect@holteck.com" class="text-brand-cyan link-hover">Email us</a> and we'll help you decide.
+      </p>
     </div>
   </section>
 
@@ -807,6 +860,17 @@
               <input type="text" name="company"
                 class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body placeholder-brand-muted/40 focus:outline-none focus:border-brand-cyan/60 transition-colors"
                 placeholder="Optional" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">Audit Tier</label>
+              <select name="tier"
+                class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body focus:outline-none focus:border-brand-cyan/60 transition-colors">
+                <option value="">Select tier...</option>
+                <option value="diagnostic">Diagnostic ($700) — 48 hours</option>
+                <option value="core">Core Audit ($2,400) — 5-7 days</option>
+                <option value="deep">Deep Audit ($6,000) — 10-14 days</option>
+                <option value="unsure">Not sure — help me decide</option>
+              </select>
             </div>
             <div>
               <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">AI System Type</label>
