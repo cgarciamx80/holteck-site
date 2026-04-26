@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8HR19CQRGG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8HR19CQRGG');
+  </script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="Holteck is an AI-powered QA consulting agency. Traditional testing, AI-driven QA pipelines, and behavioral evaluation of AI systems." />
@@ -206,6 +214,7 @@
           <a href="#how-it-works" class="text-white/60 hover:text-white text-sm font-medium transition-colors">How it works</a>
           <a href="#areas" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Areas</a>
           <a href="#coming-soon" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Roadmap</a>
+          <a href="ai-audit.html" class="text-white/60 hover:text-white text-sm font-medium transition-colors">AI QA Audit</a>
           <a href="#contact" class="btn-brand text-sm py-2.5 px-6">Let's talk</a>
         </div>
         <button id="hamburger" class="md:hidden p-2 flex flex-col gap-1.5" aria-label="Menu">
@@ -267,7 +276,7 @@
         <!-- Proof bar -->
         <div class="flex flex-wrap gap-10 mt-16 pt-10 border-t border-white/8">
           <div>
-            <p class="text-3xl font-heading font-extrabold text-white">18+</p>
+            <p class="text-3xl font-heading font-extrabold text-white">20+</p>
             <p class="text-xs text-white/40 mt-1 uppercase tracking-widest">Years in QA</p>
           </div>
           <div>
@@ -361,7 +370,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-2"/>
               </svg>
             </div>
-            <span class="track-badge bg-white/5 text-white/40">Frontier</span>
+            <span class="track-badge bg-brand/15 text-brand">New</span>
           </div>
           <h3 class="font-heading text-xl font-bold text-white mb-3">QA for AI Systems</h3>
           <p class="text-white/50 text-sm leading-relaxed flex-1">
@@ -373,7 +382,7 @@
             <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Reasoning &amp; tone evaluation</li>
             <li class="flex items-center gap-2 text-sm text-white/40"><span class="w-1 h-1 bg-brand rounded-full"></span>Structured behavior reports</li>
           </ul>
-          <a href="#coming-soon" class="mt-8 btn-ghost text-sm text-center opacity-70">Early access →</a>
+          <a href="ai-audit.html" class="mt-8 btn-brand text-sm text-center">Get an audit →</a>
         </div>
 
       </div>
@@ -557,36 +566,36 @@
         <div class="max-w-2xl">
           <div class="inline-flex items-center gap-2 bg-brand/10 border border-brand/20 rounded-full px-4 py-1.5 mb-8">
             <span class="w-1.5 h-1.5 bg-brand rounded-full animate-pulse"></span>
-            <span class="text-brand text-xs font-heading font-semibold tracking-widest uppercase">In development — Early access</span>
+            <span class="text-brand text-xs font-heading font-semibold tracking-widest uppercase">Now available — AI QA Audit</span>
           </div>
-          <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1 mb-6">The next frontier:<br />QA for AI systems.</h2>
+          <h2 class="font-heading text-4xl md:text-5xl font-extrabold text-white mt-1 mb-6">We test and break<br />AI systems before<br />your users do.</h2>
           <p class="text-white/50 leading-relaxed mb-6">
-            Most QA frameworks test whether software does what it's supposed to. But how do you test an AI that doesn't behave deterministically?
+            Most QA frameworks test whether software does what it's supposed to. But AI systems fail differently — silently, inconsistently, and only under real-world conditions.
           </p>
           <p class="text-white/50 leading-relaxed mb-8">
-            We're building a behavioral evaluation framework for LLMs and conversational AI — classifying hallucinations, tone drift, reasoning instability, contextual failures, and more. Not pass/fail. Behavioral analysis.
+            The Holteck AI QA Audit delivers a structured report — 20–30 test scenarios, hallucination analysis, risk classification, and actionable fix recommendations — in 48–72 hours. Starting at $300.
           </p>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10">
             <div class="bg-white/5 rounded-xl p-4">
               <p class="font-heading font-bold text-white text-sm mb-1">Hallucination Detection</p>
-              <p class="text-white/40 text-xs">Identify when AI systems produce confident but incorrect or fabricated responses.</p>
+              <p class="text-white/40 text-xs">Find confident but incorrect answers before they reach your users.</p>
             </div>
             <div class="bg-white/5 rounded-xl p-4">
-              <p class="font-heading font-bold text-white text-sm mb-1">Behavioral Consistency</p>
-              <p class="text-white/40 text-xs">Evaluate if the AI responds consistently to similar prompts across sessions.</p>
+              <p class="font-heading font-bold text-white text-sm mb-1">Guardrail Testing</p>
+              <p class="text-white/40 text-xs">Adversarial prompts and edge cases your team didn't think to test.</p>
             </div>
             <div class="bg-white/5 rounded-xl p-4">
-              <p class="font-heading font-bold text-white text-sm mb-1">Reasoning Stability</p>
-              <p class="text-white/40 text-xs">Detect overconfidence, logical drift, and unstable reasoning patterns.</p>
+              <p class="font-heading font-bold text-white text-sm mb-1">Context &amp; Flow Analysis</p>
+              <p class="text-white/40 text-xs">Multi-turn conversation failures and context loss across longer sessions.</p>
             </div>
             <div class="bg-white/5 rounded-xl p-4">
-              <p class="font-heading font-bold text-white text-sm mb-1">Tone &amp; Safety Patterns</p>
-              <p class="text-white/40 text-xs">Track unexpected tone shifts, bias indicators, and safety-critical behaviors.</p>
+              <p class="font-heading font-bold text-white text-sm mb-1">Risk-Classified Report</p>
+              <p class="text-white/40 text-xs">Every finding scored Critical / High / Medium / Low with specific fix recommendations.</p>
             </div>
           </div>
 
-          <a href="#contact" class="btn-brand">Request early access</a>
+          <a href="ai-audit.html" class="btn-brand">See the AI QA Audit →</a>
         </div>
       </div>
 

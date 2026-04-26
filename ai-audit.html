@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8HR19CQRGG"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-8HR19CQRGG');
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI QA Audit – Holteck</title>
+  <meta name="description" content="Holteck provides structured AI QA Audits for chatbots, LLM features, and AI-powered workflows. Find hallucinations, broken flows, and edge-case failures before your users do." />
+
+  <!-- Tailwind CDN – same as index.html -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Google Fonts – Archivo + Inter matching holteck.com -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Archivo', 'sans-serif'],
+            body: ['Inter', 'sans-serif'],
+            mono: ['DM Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              cyan:    '#00d4ff',
+              dark:    '#0a0c0f',
+              surface: '#111318',
+              border:  '#1e2128',
+              muted:   '#6b7280',
+              warn:    '#ff6b35',
+              ok:      '#00c896',
+              risk: {
+                critical: '#ff1744',
+                high:     '#ff6b35',
+                medium:   '#ffd600',
+                low:      '#00c896',
+              }
+            }
+          },
+          animation: {
+            'fade-up':   'fadeUp 0.6s ease both',
+            'fade-up-2': 'fadeUp 0.6s 0.15s ease both',
+            'fade-up-3': 'fadeUp 0.6s 0.3s ease both',
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4,0,0.6,1) infinite',
+          },
+          keyframes: {
+            fadeUp: {
+              '0%':   { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ── Base ── */
+    body { background: #0a0c0f; color: #e8eaf0; }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ── Glow bg blobs ── */
+    .glow-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(120px); pointer-events: none; z-index: 0;
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #111318; }
+    ::-webkit-scrollbar-thumb { background: #2a2f38; border-radius: 3px; }
+
+    /* ── Animated underline on links ── */
+    .link-hover {
+      position: relative;
+      text-decoration: none;
+    }
+    .link-hover::after {
+      content: '';
+      position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 1px;
+      background: #00d4ff;
+      transition: width 0.25s ease;
+    }
+    .link-hover:hover::after { width: 100%; }
+
+    /* ── Card hover ── */
+    .card-hover {
+      transition: border-color 0.25s, transform 0.25s, box-shadow 0.25s;
+    }
+    .card-hover:hover {
+      border-color: #00d4ff44;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px #00d4ff0d;
+    }
+
+    /* ── Scenario row ── */
+    .scenario-row { transition: background 0.2s; }
+    .scenario-row:hover { background: #161a20; }
+
+    /* ── CTA button pulse ring ── */
+    .btn-primary {
+      position: relative;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 32px #00d4ff55;
+    }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ── Step connector line ── */
+    .step-line {
+      position: absolute; top: 24px; left: calc(50% + 32px);
+      width: calc(100% - 64px); height: 1px;
+      background: linear-gradient(90deg, #00d4ff44, transparent);
+    }
+
+    /* ── Risk badge colors ── */
+    .risk-critical { background: #ff174420; color: #ff1744; border: 1px solid #ff174440; }
+    .risk-high     { background: #ff6b3520; color: #ff6b35; border: 1px solid #ff6b3540; }
+    .risk-medium   { background: #ffd60020; color: #ffd600; border: 1px solid #ffd60040; }
+    .risk-low      { background: #00c89620; color: #00c896; border: 1px solid #00c89640; }
+
+    /* ── Section label ── */
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: #00d4ff;
+    }
+
+    /* ── Grid lines background ── */
+    .grid-bg {
+      background-image:
+        linear-gradient(#1e212810 1px, transparent 1px),
+        linear-gradient(90deg, #1e212810 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+
+    /* ── NAV scroll ── */
+    #navbar { transition: background 0.35s, box-shadow 0.35s; }
+    #navbar.scrolled {
+      background: rgba(10,12,15,0.95);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+    }
+
+    /* ── Mobile menu ── */
+    #mobile-menu {
+      max-height: 0; opacity: 0; overflow: hidden;
+      transition: max-height 0.35s ease, opacity 0.3s ease;
+    }
+    #mobile-menu.open { max-height: 400px; opacity: 1; }
+  </style>
+</head>
+
+<body class="font-sans antialiased relative">
+
+  <!-- ════════════════════════════════════════ NAV -->
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+      <div class="flex items-center justify-between h-16">
+        <a href="index.html" class="flex-shrink-0">
+          <img src="assets/logo.svg" alt="Holteck" class="h-7 w-auto" />
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="text-white/60 hover:text-white text-sm font-medium transition-colors">← Back to Holteck</a>
+          <a href="#how-it-works" class="text-white/60 hover:text-white text-sm font-medium transition-colors">How it works</a>
+          <a href="#pricing" class="text-white/60 hover:text-white text-sm font-medium transition-colors">Pricing</a>
+          <a href="#contact" class="btn-primary inline-flex items-center gap-2 bg-brand-cyan text-black text-sm font-bold px-5 py-2.5 rounded-lg">Request Audit</a>
+        </div>
+        <button id="hamburger" class="md:hidden p-2 flex flex-col gap-1.5" aria-label="Menu">
+          <span class="block w-6 h-0.5 bg-white/80"></span>
+          <span class="block w-6 h-0.5 bg-white/80"></span>
+          <span class="block w-4 h-0.5 bg-white/80"></span>
+        </button>
+      </div>
+      <div id="mobile-menu">
+        <div class="flex flex-col gap-1 py-4 border-t border-white/5">
+          <a href="index.html" class="mob-link text-white/70 hover:text-white py-2.5 text-sm">← Back to Holteck</a>
+          <a href="#how-it-works" class="mob-link text-white/70 hover:text-white py-2.5 text-sm">How it works</a>
+          <a href="#pricing" class="mob-link text-white/70 hover:text-white py-2.5 text-sm">Pricing</a>
+          <a href="#contact" class="mob-link btn-primary bg-brand-cyan text-black mt-2 text-sm text-center py-2.5 px-6 rounded-lg">Request Audit</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- ════════════════════════════════════════ HERO -->
+  <section class="relative overflow-hidden grid-bg pt-24 pb-32" id="hero">
+    <!-- Glow blobs -->
+    <div class="glow-blob w-96 h-96 bg-brand-cyan/10 -top-24 -right-24"></div>
+    <div class="glow-blob w-64 h-64 bg-brand-warn/8 top-32 -left-16"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+      <div class="max-w-3xl">
+        <div class="section-label mb-5 animate-fade-up">⬡ AI QA Audit Service</div>
+
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-black leading-[1.08] tracking-tight text-white animate-fade-up-2 mb-6">
+          We test and break<br />
+          <span class="text-brand-cyan">AI systems</span><br />
+          before your users do.
+        </h1>
+
+        <p class="text-lg md:text-xl text-brand-muted font-body leading-relaxed animate-fade-up-3 mb-10 max-w-2xl">
+          A senior QA engineer with 20+ years of experience designs and runs structured test
+          scenarios against your AI system — finding hallucinations, guardrail failures, and
+          edge-case breakdowns your team didn't think to test. You get a prioritized findings
+          report, ready to hand to your dev team.
+        </p>
+
+        <div class="flex flex-wrap gap-4 animate-fade-up-3">
+          <a href="#contact" class="btn-primary bg-brand-cyan text-black font-bold px-8 py-4 rounded-xl text-base inline-flex items-center gap-2">
+            Request AI QA Audit
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <a href="sample-report.html" target="_blank" class="inline-flex items-center gap-2 border border-brand-border text-brand-muted hover:text-white hover:border-brand-cyan/40 font-semibold px-8 py-4 rounded-xl text-base transition-all duration-200">
+            View Sample Report
+          </a>
+        </div>
+
+        <!-- Trust signals -->
+        <div class="mt-14 flex flex-wrap gap-6 text-sm font-mono text-brand-muted">
+          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> 20+ yrs QA experience</span>
+          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> Delivered in 48–72 hrs</span>
+          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> Starting at $300</span>
+          <span class="flex items-center gap-2"><span class="text-brand-cyan">✓</span> No integration required</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ PROBLEM -->
+  <section class="py-24 border-t border-brand-border" id="problem">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div>
+          <div class="section-label mb-4">// The Problem</div>
+          <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+            AI products don't fail<br />like normal software.
+          </h2>
+          <p class="text-brand-muted font-body leading-relaxed text-lg">
+            Traditional QA catches broken buttons and failed API calls.
+            AI systems fail differently — silently, inconsistently, and often
+            only under real-world conditions.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <!-- Failure pills -->
+          <div class="flex items-start gap-4 bg-brand-surface border border-brand-border rounded-xl p-5 card-hover">
+            <div class="w-8 h-8 rounded-lg bg-brand-risk-critical/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-brand-risk-critical text-sm">⚡</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Responses are non-deterministic</div>
+              <div class="text-brand-muted text-sm font-body">The same input can produce different outputs. Traditional test assertions break.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-brand-surface border border-brand-border rounded-xl p-5 card-hover">
+            <div class="w-8 h-8 rounded-lg bg-brand-risk-high/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-brand-risk-high text-sm">⚡</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Hallucinations go undetected</div>
+              <div class="text-brand-muted text-sm font-body">Confident, convincing, and completely wrong answers that slip past standard QA.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-brand-surface border border-brand-border rounded-xl p-5 card-hover">
+            <div class="w-8 h-8 rounded-lg bg-brand-risk-medium/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-brand-risk-medium text-sm">⚡</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Context breaks across multi-step flows</div>
+              <div class="text-brand-muted text-sm font-body">The AI forgets, contradicts itself, or loses the thread in longer conversations.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4 bg-brand-surface border border-brand-border rounded-xl p-5 card-hover">
+            <div class="w-8 h-8 rounded-lg bg-brand-risk-low/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <span class="text-brand-risk-low text-sm">⚡</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Edge cases surface only in production</div>
+              <div class="text-brand-muted text-sm font-body">Users find the failures you didn't test for. After launch.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ SOLUTION -->
+  <section class="py-24 border-t border-brand-border bg-brand-surface/40" id="solution">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center max-w-2xl mx-auto mb-16">
+        <div class="section-label mb-4">// The Solution</div>
+        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-5">
+          Structured AI QA Audits<br />for real-world failure scenarios.
+        </h2>
+        <p class="text-brand-muted font-body text-lg leading-relaxed">
+          Holteck tests AI systems using structured QA methodology, AI-assisted workflows,
+          scenario design, exploratory testing, and risk analysis — built on 20+ years of QA experience.
+        </p>
+      </div>
+
+      <!-- Deliverables grid -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">01</div>
+          <div class="text-white font-bold mb-2">20–30 Test Scenarios</div>
+          <div class="text-brand-muted text-sm font-body">Structured scenarios covering hallucination, context, guardrails, edge cases, and consistency.</div>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">02</div>
+          <div class="text-white font-bold mb-2">Failure Analysis</div>
+          <div class="text-brand-muted text-sm font-body">Detailed breakdown of what failed, why it failed, and how it could impact real users.</div>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">03</div>
+          <div class="text-white font-bold mb-2">Risk Classification</div>
+          <div class="text-brand-muted text-sm font-body">Every finding scored Critical / High / Medium / Low so you know what to fix first.</div>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">04</div>
+          <div class="text-white font-bold mb-2">Edge-Case Testing</div>
+          <div class="text-brand-muted text-sm font-body">Adversarial prompts, boundary inputs, and unusual user behaviors your team didn't think to test.</div>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">05</div>
+          <div class="text-white font-bold mb-2">Fix Recommendations</div>
+          <div class="text-brand-muted text-sm font-body">Actionable, specific recommendations — not generic "improve the prompt" advice.</div>
+        </div>
+        <div class="bg-brand-surface border border-brand-border rounded-xl p-6 card-hover">
+          <div class="text-brand-cyan font-mono text-sm mb-3">06</div>
+          <div class="text-white font-bold mb-2">Client-Ready Report</div>
+          <div class="text-brand-muted text-sm font-body">A structured, clean audit report you can share with your team, investors, or stakeholders.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ HOW IT WORKS -->
+  <section class="py-24 border-t border-brand-border" id="how-it-works">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <div class="section-label mb-4">// Process</div>
+        <h2 class="text-4xl md:text-5xl font-black text-white leading-tight">
+          Three steps. Clear output.
+        </h2>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-8 relative">
+        <!-- Step 1 -->
+        <div class="relative">
+          <div class="bg-brand-surface border border-brand-border rounded-2xl p-8 card-hover h-full">
+            <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center mb-6">
+              <span class="text-brand-cyan font-mono font-bold text-sm">01</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">Share your AI feature</h3>
+            <p class="text-brand-muted font-body text-sm leading-relaxed">
+              You provide access, documentation, a demo flow, or a product description.
+              No integration required — a description is enough to get started.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="relative">
+          <div class="bg-brand-surface border border-brand-border rounded-2xl p-8 card-hover h-full">
+            <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center mb-6">
+              <span class="text-brand-cyan font-mono font-bold text-sm">02</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">We test and evaluate</h3>
+            <p class="text-brand-muted font-body text-sm leading-relaxed">
+              A senior QA engineer designs scenarios specific to your system, runs adversarial
+              prompts, edge cases, and behavioral consistency checks — then analyzes every
+              failure for root cause and real user impact.
+            </p>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="relative">
+          <div class="bg-brand-surface border border-brand-border rounded-2xl p-8 card-hover h-full">
+            <div class="w-12 h-12 rounded-xl bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center mb-6">
+              <span class="text-brand-cyan font-mono font-bold text-sm">03</span>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-3">You get a clear report</h3>
+            <p class="text-brand-muted font-body text-sm leading-relaxed">
+              You receive a structured report with findings, severity scores, risks, and
+              actionable recommendations — delivered in 48–72 hours.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ WHAT WE TEST + FAILURES WE FIND -->
+  <section class="py-24 border-t border-brand-border bg-brand-surface/40" id="what-we-test">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-16">
+
+        <!-- What we test -->
+        <div>
+          <div class="section-label mb-4">// Scope</div>
+          <h2 class="text-3xl font-black text-white mb-8">What we test</h2>
+          <div class="space-y-3">
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">AI chatbots &amp; conversational assistants</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">LLM-powered product features</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">Prompt workflows &amp; chains</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">Customer support bots</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">Internal AI tools &amp; copilots</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">AI-generated summaries &amp; content</span>
+            </div>
+            <div class="flex items-center gap-3 py-3 border-b border-brand-border/60">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">RAG systems &amp; knowledge bases</span>
+            </div>
+            <div class="flex items-center gap-3 py-3">
+              <span class="text-brand-cyan text-sm font-mono">→</span>
+              <span class="text-white font-medium">AI workflow automations</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Common failures -->
+        <div>
+          <div class="section-label mb-4">// Common Findings</div>
+          <h2 class="text-3xl font-black text-white mb-8">Failures we find</h2>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-critical inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Critical</div>
+              <div class="text-white text-sm font-semibold">Hallucinated answers</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-high inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">High</div>
+              <div class="text-white text-sm font-semibold">Weak guardrails</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-high inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">High</div>
+              <div class="text-white text-sm font-semibold">Broken context handling</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-medium inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Medium</div>
+              <div class="text-white text-sm font-semibold">Inconsistent responses</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-medium inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Medium</div>
+              <div class="text-white text-sm font-semibold">Poor fallback behavior</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-medium inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Medium</div>
+              <div class="text-white text-sm font-semibold">Incorrect summaries</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-low inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Low</div>
+              <div class="text-white text-sm font-semibold">Edge-case failures</div>
+            </div>
+            <div class="bg-brand-surface border border-brand-border rounded-xl p-4 card-hover">
+              <div class="risk-low inline-block text-xs font-bold px-2 py-0.5 rounded mb-2 font-mono">Low</div>
+              <div class="text-white text-sm font-semibold">Confusing user flows</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ SAMPLE REPORT PREVIEW -->
+  <section class="py-24 border-t border-brand-border" id="sample-report">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <div class="section-label mb-4">// Sample Output</div>
+        <h2 class="text-4xl font-black text-white mb-4">What a report looks like</h2>
+        <p class="text-brand-muted font-body">Demo content — real audits include your actual system findings.</p>
+      </div>
+
+      <!-- Mock report card -->
+      <div class="bg-brand-surface border border-brand-border rounded-2xl overflow-hidden max-w-4xl mx-auto">
+
+        <!-- Report header bar -->
+        <div class="bg-[#0d0f14] border-b border-brand-border px-6 py-4 flex items-center justify-between flex-wrap gap-3">
+          <div>
+            <div class="text-xs text-brand-muted font-mono mb-1">AUDIT REPORT — DEMO</div>
+            <div class="text-white font-bold text-lg">Acme Support Bot — AI QA Audit</div>
+            <div class="text-xs text-brand-muted font-body mt-0.5">Generated by Holteck · 2026-04-25</div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="risk-high text-xs font-bold px-3 py-1 rounded font-mono">Overall Risk: HIGH</span>
+          </div>
+        </div>
+
+        <!-- Executive summary -->
+        <div class="px-6 py-5 border-b border-brand-border">
+          <div class="text-xs text-brand-muted font-mono uppercase tracking-widest mb-2">Executive Summary</div>
+          <p class="text-sm text-white font-body leading-relaxed">
+            The Acme Support Bot demonstrates adequate handling of standard customer queries but exhibits
+            significant vulnerabilities under adversarial inputs and multi-turn conversations. Three critical
+            hallucination events were observed during refund policy scenarios. Guardrail coverage is insufficient
+            for production use without remediation.
+          </p>
+        </div>
+
+        <!-- Metrics row -->
+        <div class="grid grid-cols-4 divide-x divide-brand-border border-b border-brand-border">
+          <div class="px-6 py-5 text-center">
+            <div class="text-3xl font-black text-white font-sans">24</div>
+            <div class="text-xs text-brand-muted font-mono mt-1">Scenarios</div>
+          </div>
+          <div class="px-6 py-5 text-center">
+            <div class="text-3xl font-black text-brand-risk-critical font-sans">3</div>
+            <div class="text-xs text-brand-muted font-mono mt-1">Critical</div>
+          </div>
+          <div class="px-6 py-5 text-center">
+            <div class="text-3xl font-black text-brand-risk-high font-sans">5</div>
+            <div class="text-xs text-brand-muted font-mono mt-1">High</div>
+          </div>
+          <div class="px-6 py-5 text-center">
+            <div class="text-3xl font-black text-brand-ok font-sans">7</div>
+            <div class="text-xs text-brand-muted font-mono mt-1">Areas Covered</div>
+          </div>
+        </div>
+
+        <!-- Sample scenarios table -->
+        <div class="px-6 py-5 border-b border-brand-border">
+          <div class="text-xs text-brand-muted font-mono uppercase tracking-widest mb-4">Sample Findings</div>
+          <div class="space-y-2">
+            <div class="scenario-row flex items-center justify-between gap-4 rounded-lg px-4 py-3 bg-[#0d0f14]">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-brand-muted text-xs font-mono flex-shrink-0">TS-003</span>
+                <span class="text-white text-sm truncate">Refund policy hallucination under pressure</span>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="risk-critical text-xs font-bold px-2 py-0.5 rounded font-mono">Critical</span>
+                <span class="bg-brand-warn/20 text-brand-warn border border-brand-warn/40 text-xs font-bold px-2 py-0.5 rounded font-mono">✕ Fail</span>
+              </div>
+            </div>
+            <div class="scenario-row flex items-center justify-between gap-4 rounded-lg px-4 py-3 bg-[#0d0f14]">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-brand-muted text-xs font-mono flex-shrink-0">TS-007</span>
+                <span class="text-white text-sm truncate">Context loss after 5-turn conversation</span>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="risk-high text-xs font-bold px-2 py-0.5 rounded font-mono">High</span>
+                <span class="bg-brand-warn/20 text-brand-warn border border-brand-warn/40 text-xs font-bold px-2 py-0.5 rounded font-mono">✕ Fail</span>
+              </div>
+            </div>
+            <div class="scenario-row flex items-center justify-between gap-4 rounded-lg px-4 py-3 bg-[#0d0f14]">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-brand-muted text-xs font-mono flex-shrink-0">TS-012</span>
+                <span class="text-white text-sm truncate">Standard greeting and routing</span>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="risk-low text-xs font-bold px-2 py-0.5 rounded font-mono">Low</span>
+                <span class="bg-brand-ok/20 text-brand-ok border border-brand-ok/40 text-xs font-bold px-2 py-0.5 rounded font-mono">✓ Pass</span>
+              </div>
+            </div>
+            <div class="scenario-row flex items-center justify-between gap-4 rounded-lg px-4 py-3 bg-[#0d0f14]">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-brand-muted text-xs font-mono flex-shrink-0">TS-019</span>
+                <span class="text-white text-sm truncate">Adversarial jailbreak attempt on pricing</span>
+              </div>
+              <div class="flex items-center gap-2 flex-shrink-0">
+                <span class="risk-critical text-xs font-bold px-2 py-0.5 rounded font-mono">Critical</span>
+                <span class="bg-brand-warn/20 text-brand-warn border border-brand-warn/40 text-xs font-bold px-2 py-0.5 rounded font-mono">✕ Fail</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top recommendation -->
+        <div class="px-6 py-5">
+          <div class="text-xs text-brand-muted font-mono uppercase tracking-widest mb-3">Top Recommendation</div>
+          <div class="border-l-2 border-brand-risk-critical pl-4">
+            <div class="flex items-center gap-2 mb-1">
+              <span class="risk-critical text-xs font-bold px-2 py-0.5 rounded font-mono">Critical</span>
+              <span class="text-white font-semibold text-sm">Implement factual grounding for policy responses</span>
+            </div>
+            <p class="text-brand-muted text-sm font-body">Refund and policy answers must be anchored to a verified knowledge base. Raw LLM generation for policy-sensitive queries poses a legal and UX risk in production.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center mt-8">
+        <a href="#contact" class="inline-flex items-center gap-2 border border-brand-border text-brand-muted hover:text-white hover:border-brand-cyan/40 font-semibold px-6 py-3 rounded-xl text-sm transition-all duration-200">
+          Get a real audit for your system →
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ WHY HOLTECK -->
+  <section class="py-24 border-t border-brand-border bg-brand-surface/40" id="why-holteck">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-16 items-center">
+        <div>
+          <div class="section-label mb-4">// Why Holteck</div>
+          <h2 class="text-4xl font-black text-white leading-tight mb-6">
+            Specialized AI QA,<br />not generic feedback.
+          </h2>
+          <p class="text-brand-muted font-body text-lg leading-relaxed">
+            Holteck is a specialized AI QA and evaluation lab. Not a generalist agency.
+            Not an automated scanner. Human-led, methodology-driven, AI-assisted audits
+            built for how AI systems actually fail.
+          </p>
+        </div>
+        <div class="space-y-4">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center flex-shrink-0">
+              <span class="text-brand-cyan text-sm">✓</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">20+ years of QA experience</div>
+              <div class="text-brand-muted text-sm font-body">Enterprise QA background including Azure DevOps, requirements-first methodology, and full testing lifecycle.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center flex-shrink-0">
+              <span class="text-brand-cyan text-sm">✓</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Manual + AI-assisted workflows</div>
+              <div class="text-brand-muted text-sm font-body">Human judgment for scenario design, AI acceleration for coverage and analysis. The best of both.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center flex-shrink-0">
+              <span class="text-brand-cyan text-sm">✓</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Requirements-first testing mindset</div>
+              <div class="text-brand-muted text-sm font-body">Tests are designed from what your AI should do — not guessed from what it actually produces.</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-brand-cyan/10 border border-brand-cyan/30 flex items-center justify-center flex-shrink-0">
+              <span class="text-brand-cyan text-sm">✓</span>
+            </div>
+            <div>
+              <div class="text-white font-semibold mb-1">Fast, startup-friendly execution</div>
+              <div class="text-brand-muted text-sm font-body">48–72 hour turnaround. No enterprise contracts. No retainer. Pay for what you need.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ PRICING -->
+  <section class="py-24 border-t border-brand-border" id="pricing">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="text-center mb-12">
+        <div class="section-label mb-4">// Pricing</div>
+        <h2 class="text-4xl font-black text-white">Simple, transparent pricing.</h2>
+      </div>
+
+      <div class="max-w-md mx-auto">
+        <div class="bg-brand-surface border border-brand-cyan/30 rounded-2xl p-8 relative overflow-hidden">
+          <!-- Glow effect -->
+          <div class="absolute top-0 right-0 w-48 h-48 bg-brand-cyan/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-2xl pointer-events-none"></div>
+
+          <div class="relative">
+            <div class="text-xs font-mono text-brand-cyan uppercase tracking-widest mb-4">Starter AI QA Audit</div>
+            <div class="flex items-end gap-2 mb-2">
+              <span class="text-5xl font-black text-white">$300</span>
+              <span class="text-brand-muted font-body mb-2">starting</span>
+            </div>
+            <div class="text-brand-muted text-sm font-body mb-8">Delivered in 48–72 hours</div>
+
+            <div class="space-y-3 mb-8">
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">20–30 structured test scenarios</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">AI failure analysis</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">Risk classification report</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">Actionable fix recommendations</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">Client-ready audit document</span>
+              </div>
+              <div class="flex items-center gap-3 text-sm">
+                <span class="text-brand-cyan">✓</span>
+                <span class="text-white">Delivered in 48–72 hours</span>
+              </div>
+            </div>
+
+            <a href="#contact" class="btn-primary block w-full bg-brand-cyan text-black font-bold text-center py-4 rounded-xl text-base">
+              Request Audit
+            </a>
+          </div>
+        </div>
+
+        <p class="text-center text-brand-muted text-sm font-body mt-4">
+          Need a larger scope? <a href="mailto:connect@holteck.com" class="text-brand-cyan link-hover">Email us</a> for custom pricing.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ CONTACT / CTA -->
+  <section class="py-24 border-t border-brand-border bg-brand-surface/40" id="contact">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid md:grid-cols-2 gap-16 items-start">
+
+        <!-- Left col: headline -->
+        <div class="md:pt-4">
+          <div class="section-label mb-4">// Get Started</div>
+          <h2 class="text-4xl md:text-5xl font-black text-white leading-tight mb-6">
+            Find the failures<br />before your<br />
+            <span class="text-brand-cyan">users do.</span>
+          </h2>
+          <p class="text-brand-muted font-body leading-relaxed mb-8">
+            Describe your AI system and we'll reach out within 24 hours to confirm
+            scope, timeline, and next steps. No commitment required.
+          </p>
+          <div class="space-y-3 text-sm">
+            <div class="flex items-center gap-3 text-brand-muted">
+              <span class="text-brand-cyan font-mono">✓</span>
+              <span>Response within 24 hours</span>
+            </div>
+            <div class="flex items-center gap-3 text-brand-muted">
+              <span class="text-brand-cyan font-mono">✓</span>
+              <span>No contract, no retainer</span>
+            </div>
+            <div class="flex items-center gap-3 text-brand-muted">
+              <span class="text-brand-cyan font-mono">✓</span>
+              <a href="mailto:connect@holteck.com" class="text-brand-cyan link-hover">connect@holteck.com</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right col: form -->
+        <div class="bg-brand-surface border border-brand-border rounded-2xl p-8">
+          <form id="auditForm" action="https://formspree.io/f/xdapranv" method="POST" class="space-y-5" novalidate>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">Name *</label>
+                <input type="text" name="name" required
+                  class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body placeholder-brand-muted/40 focus:outline-none focus:border-brand-cyan/60 transition-colors"
+                  placeholder="Your name" />
+              </div>
+              <div>
+                <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">Email *</label>
+                <input type="email" name="email" required
+                  class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body placeholder-brand-muted/40 focus:outline-none focus:border-brand-cyan/60 transition-colors"
+                  placeholder="you@company.com" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">Company</label>
+              <input type="text" name="company"
+                class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body placeholder-brand-muted/40 focus:outline-none focus:border-brand-cyan/60 transition-colors"
+                placeholder="Optional" />
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">AI System Type</label>
+              <select name="aiType"
+                class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body focus:outline-none focus:border-brand-cyan/60 transition-colors">
+                <option value="">Select type...</option>
+                <option>Customer Support Chatbot</option>
+                <option>LLM-powered Feature</option>
+                <option>AI Assistant / Copilot</option>
+                <option>Prompt Workflow / Chain</option>
+                <option>RAG System</option>
+                <option>AI Workflow Automation</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-mono text-brand-cyan uppercase tracking-widest mb-2">Tell us about your AI system *</label>
+              <textarea name="message" rows="4" required
+                class="w-full bg-[#0d0f14] border border-brand-border rounded-lg px-4 py-3 text-white text-sm font-body placeholder-brand-muted/40 focus:outline-none focus:border-brand-cyan/60 transition-colors resize-none"
+                placeholder="What does it do? What are your main concerns? Any known issues?"></textarea>
+            </div>
+
+            <!-- Honeypot -->
+            <input type="text" name="_gotcha" class="hidden" tabindex="-1" autocomplete="off" />
+            <input type="hidden" name="_subject" value="New AI QA Audit request from holteck.com" />
+
+            <!-- Validation / success / error states -->
+            <div id="formValidation" class="hidden bg-brand-warn/10 border border-brand-warn/30 rounded-lg px-4 py-3 text-brand-warn text-sm font-body">
+              Please fill in your name, email, and a description of your AI system.
+            </div>
+            <div id="formSuccess" class="hidden bg-brand-ok/10 border border-brand-ok/30 rounded-lg px-4 py-3 text-brand-ok text-sm font-body">
+              ✓ Message sent! We'll get back to you at connect@holteck.com within 24 hours.
+            </div>
+            <div id="formError" class="hidden bg-brand-warn/10 border border-brand-warn/30 rounded-lg px-4 py-3 text-brand-warn text-sm font-body">
+              Something went wrong. Please email us directly at <a href="mailto:connect@holteck.com" class="underline">connect@holteck.com</a>
+            </div>
+
+            <button type="submit" id="submitBtn"
+              class="btn-primary w-full bg-brand-cyan text-black font-bold py-4 rounded-xl text-base">
+              Request AI QA Audit
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ════════════════════════════════════════ FOOTER -->
+  <footer class="bg-darker border-t border-white/5 py-10">
+    <div class="max-w-6xl mx-auto px-6 lg:px-10">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-4">
+          <img src="assets/logo.svg" alt="Holteck" class="h-6 opacity-50" />
+          <p class="text-white/25 text-sm">© 2026 Holteck. All rights reserved.</p>
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="https://github.com/cgarciamx80" target="_blank" rel="noopener" class="text-white/30 hover:text-white/70 transition-colors text-sm">GitHub</a>
+          <a href="privacy-policy.html" class="text-white/30 hover:text-white/70 transition-colors text-sm">Privacy Policy</a>
+          <a href="mailto:connect@holteck.com" class="text-white/30 hover:text-white/70 transition-colors text-sm">Contact</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ════════════════════════════════════════ JS -->
+  <script>
+    // NAV scroll
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 40);
+    }, { passive: true });
+
+    // Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobile-menu');
+    hamburger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', () => mobileMenu.classList.remove('open')));
+
+    // Contact form via Formspree
+    const form = document.getElementById('auditForm');
+    const requiredFields = ['name', 'email', 'message'];
+
+    // Clear field error highlight on input
+    requiredFields.forEach(name => {
+      form.querySelector(`[name="${name}"]`).addEventListener('input', function () {
+        this.style.borderColor = '';
+        document.getElementById('formValidation').classList.add('hidden');
+      });
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      // Validate required fields
+      const missing = requiredFields.filter(name => {
+        const el = form.querySelector(`[name="${name}"]`);
+        const empty = !el.value.trim();
+        el.style.borderColor = empty ? '#ff6b35' : '';
+        return empty;
+      });
+
+      if (missing.length > 0) {
+        document.getElementById('formValidation').classList.remove('hidden');
+        form.querySelector(`[name="${missing[0]}"]`).focus();
+        return;
+      }
+
+      document.getElementById('formValidation').classList.add('hidden');
+
+      const btn = form.querySelector('button[type="submit"]');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+
+      try {
+        const res = await fetch(form.action, {
+          method: 'POST',
+          body: new FormData(form),
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          form.reset();
+          requiredFields.forEach(name => form.querySelector(`[name="${name}"]`).style.borderColor = '');
+          document.getElementById('formSuccess').classList.remove('hidden');
+          btn.classList.add('hidden');
+        } else {
+          document.getElementById('formError').classList.remove('hidden');
+          btn.textContent = 'Request AI QA Audit';
+          btn.disabled = false;
+        }
+      } catch {
+        document.getElementById('formError').classList.remove('hidden');
+        btn.textContent = 'Request AI QA Audit';
+        btn.disabled = false;
+      }
+    });
+  </script>
+
+</body>
+</html>
